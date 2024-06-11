@@ -1,103 +1,101 @@
-<script lang="ts">
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import Fish from '../assets/fish.svelte';
+<script>
+  import { onMount } from 'svelte';
+  import ColorPicker from 'svelte-awesome-color-picker';
 
-  const roomId = $page.params?.roomId;
+  let rgb = { r: 246, g: 240, b: 220, a: 1 };
 
-  let showModal = false;
+  let currentFill = `fill:rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 
-  function handleTouchStart() {}
+  let color;
 
-  function handleTouchEnd() {}
+  function handleSvgClick(event) {
+    if (event.target?.tagName === 'svg' || event.traget?.tagName === 'path') return;
+
+    event.target.style = currentFill;
+  }
+
+  onMount(() => {
+    const item = document.getElementById('_fish_2');
+    if (!item) return;
+
+    item.addEventListener('click', handleSvgClick);
+
+    return () => {
+      item.removeEventListener('click', handleSvgClick);
+    };
+  });
 </script>
 
-<div class="bg-white w-full h-full font-sans disable-double-tab-zoom prevent-long-press">
-  <div
-    class="modal-overlay bg-[#00000080] absolute w-full h-full justify-center items-center"
-    style={`display: ${showModal ? 'flex' : 'none'}`}
-  >
-    <div
-      class="modal flex flex-col justify-evenly -tracking-widest w-2/3 h-1/4 border-2 border-black border-solid bg-white rounded-xl touch-none"
-    >
-      <div class="font-bold text-center">title</div>
-      <div class="text-sm text-center tracking-tighter">
-        <p>content</p>
-      </div>
-      <button class="text-center font-bold text-sm" on:click={() => (showModal = false)}>
-        close
-      </button>
-    </div>
-  </div>
+<div class="main">
+  <div>
+    <div class="body">
+      <svg
+        id="_fish_2"
+        class="w-auto h-4/5 object-none"
+        data-name="fish 2"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 694.19 269.65"
+      >
+        <defs>
+          <style>
+          </style>
+        </defs>
+        <g>
+          <g id="tail">
+            <polygon fill="#fff" points=".5 .87 230.38 133.58 .5 266.3 .5 .87" />
+            <path
+              d="m1,1.73l228.38,131.85L1,265.44V1.73M0,0v267.17s231.38-133.58,231.38-133.58L0,0H0Z"
+            />
+          </g>
+          <g id="body">
+            <ellipse fill="#fff" cx="421.69" cy="135.65" rx="272" ry="133.5" />
+            <path
+              d="m421.69,2.65c149.71,0,271.5,59.66,271.5,133s-121.79,133-271.5,133-271.5-59.66-271.5-133S271.98,2.65,421.69,2.65m0-1c-150.5,0-272.5,59.99-272.5,134s122,134,272.5,134,272.5-59.99,272.5-134S572.19,1.65,421.69,1.65h0Z"
+            />
+          </g>
+          <g id="eye">
+            <circle fill="#fff" cx="545.69" cy="105.15" r="35" />
+            <path
+              d="m545.69,70.65c19.02,0,34.5,15.48,34.5,34.5s-15.48,34.5-34.5,34.5-34.5-15.48-34.5-34.5,15.48-34.5,34.5-34.5m0-1c-19.61,0-35.5,15.89-35.5,35.5s15.89,35.5,35.5,35.5,35.5-15.89,35.5-35.5-15.89-35.5-35.5-35.5h0Z"
+            />
+          </g>
+        </g>
+      </svg>
 
-  <div class="isolate px-6 pt-16 lg:px-8">
-    <div class="mx-auto max-w-2.5xl py-3 sm:py-24 lg:py-36">
-      <div class="w-full h-full flex flex-col justify-center items-center text-center">
-        <h1 class="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-          <p>painting</p>
-        </h1>
-
-        <div class="mt-6 flex flex-col items-center justify-center gap-x-2">
-          <p>let's customize it!!</p>
-        </div>
-
-        <div class="flex justify-center w-5/6 mt-6 gap-y-10">
-          <Fish />
-        </div>
-
-        <div class="flex justify-center items-center w-2/3 relative mt-8">
-          <button
-            class="info-badge absolute h-8 w-8 bg-white border-2 border-solid border-black rounded-full font-bold z-20"
-            on:click={() => (showModal = true)}>i</button
-          >
-
-          <button
-            class="button overflow-hidden relative flex justify-center items-center border-2 border-solid border-slate-950 rounded-xl w-full h-20"
-            on:touchstart={handleTouchStart}
-            on:touchend={handleTouchEnd}
-          >
-            <p class="z-20">send</p>
-            <div class="fill absolute bottom-0 left-0 height-0 w-full bg-[#1dc9ff] z-10" />
-          </button>
-        </div>
+      <div>
+        <ColorPicker
+          bind:rgb
+          bind:color
+          isAlpha={false}
+          isTextInput={false}
+          on:input={({ detail }) => {
+            currentFill = `fill:rgb(${detail.rgb?.r}, ${detail.rgb?.g}, ${detail.rgb?.b})`;
+          }}
+        />
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  .disable-double-tab-zoom {
-    touch-action: manipulation;
+  .main {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
   }
 
-  .prevent-long-press {
-    -webkit-touch-callout: none;
-    user-select: none;
-  }
-
-  .info-badge {
-    bottom: 80%;
-    right: -1rem;
-  }
-
-  .modal-overlay {
-    z-index: 21;
-  }
-
-  .modal {
-    z-index: 22;
-  }
-
-  .fill {
-    transition: height 5s linear;
-  }
-
-  .button:active .fill {
+  svg {
+    width: 100%;
     height: 100%;
   }
 
-  .button:not(:active) .fill {
-    height: 0;
-    transition: none;
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 </style>
